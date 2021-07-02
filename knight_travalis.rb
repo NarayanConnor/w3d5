@@ -1,6 +1,8 @@
 require_relative "poly_tree.rb"
-
+require 'byebug'
 class KnightPathfinder
+
+    attr_accessor  :root_node
 
     def initialize(pos)
         if (pos[0]<8 && pos[0] >= 0) && (pos[1]<8 && pos[1] >= 0)
@@ -8,10 +10,9 @@ class KnightPathfinder
         else 
             raise "invalid position"
         end
-
+        
         @considered_pos=[pos]
-        @root_node=PolyTreeNode.new(pos)
-
+        # self.build_move_tree
     end
 
     def self.add_arr(arr_1,arr_2)
@@ -34,9 +35,40 @@ class KnightPathfinder
 
     def new_move_pos(pos)
         valid = KnightPathfinder.valid_moves(pos)
-        valid.delete(pos)
-        @considered_pos = @considered_pos + valid
+        
+        valid.each do |position|
+            #
+            if @considered_pos.include?(position)
+
+                 valid.delete(position)
+                
+            end
+        end
+        @considered_pos= @considered_pos+valid
+        return valid
     end
+
+    def build_move_tree
+
+        self.root_node = PolyTreeNode.new(@pos)
+        q=[root_node]
+        
+        until q.empty?
+
+            current=q.shift
+            #
+            new_move_pos(current.value).each do |val|
+                #
+                node=PolyTreeNode.new(val)
+                current.add_child(node)
+                q<<node
+            end
+        end
+    end
+
+
+
+   
 
 
 
